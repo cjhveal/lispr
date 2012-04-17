@@ -17,7 +17,8 @@ module Lispr
     end
 
     def find var
-      @dict[var] if @dict.has_key? var else @outer.find var rescue raise "Symbol '#{var}' not defined"
+      return @dict[var] if @dict.has_key? var
+      @outer.find var rescue raise "Symbol '#{var}' not defined"
     end
   end
   GLOBALS = {:+ => lambda(&:+), :- => lambda(&:-), :* => lambda(&:*), :/ => lambda(&:/), :% => lambda(&:%),
@@ -29,7 +30,7 @@ module Lispr
   @@global_env= Env.new GLOBALS
   
   def run x, env=@@global_env
-    if x.class == String
+    if x.class == Symbol
       return env.find x
     elsif x.class != Array
       return x
@@ -40,10 +41,10 @@ module Lispr
       return run (eval(test,env) ? conseq : alt), env
     elsif x.first == :set!
       (_, var, expr) = x
-      env.set! var, expr
+      env.set! var, run(expr)
     elsif x.first == :define
       (_, var, expr) = x
-      env.define var, expr
+      env.define var, run(expr)
     elsif x.first == :lambda
       (_, params, expr) = x
       return lambda { |*args| run expr, (Env.new Hash[params.zip args], env) }
@@ -51,7 +52,7 @@ module Lispr
       x[1..-1].map {|expr| run expr, env}.last
     else
       exprs = x.map {|expr| run expr, env}
-      procedure = exprs.pop
+      procedure = exprs.shift
       return procedure.call(*exprs)
     end
   end
@@ -71,12 +72,12 @@ module Lispr
     if token == '('
       branch = []
       branch.push read_next tokens until tokens.first == ')'
-      tokens.pop
-      return branch
+      tokens.shift
+      branch
     elsif token == ')' 
       raise "unexpected ')' token"
     else
-      return atomize(token);
+      atomize(token);
     end
   end
 
@@ -84,4 +85,12 @@ module Lispr
     Integer(token) rescue Float(token) rescue token.to_sym
   end
 
+  def repl
+    loop do
+      val = run read gets.chomp
+      puts val unless val.nil?
+    end
+  end
+
 end
+include Lispr
