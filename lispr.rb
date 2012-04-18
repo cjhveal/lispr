@@ -87,6 +87,7 @@ module Lispr
 
   def repl
     loop do
+      print "> "
       val = run read gets.chomp
       puts val unless val.nil?
     end
