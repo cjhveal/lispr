@@ -38,13 +38,13 @@ module Lispr
       return x[1..-1]
     elsif x.first == :if
       (_, test, conseq, alt) = x
-      return run (eval(test,env) ? conseq : alt), env
+      return run (run(test,env) ? conseq : alt), env
     elsif x.first == :set!
       (_, var, expr) = x
-      env.set! var, run(expr)
+      env.set! var, run(expr,env)
     elsif x.first == :define
       (_, var, expr) = x
-      env.define var, run(expr)
+      env.define var, run(expr,env)
     elsif x.first == :lambda
       (_, params, expr) = x
       return lambda { |*args| run expr, (Env.new Hash[params.zip args], env) }
@@ -73,11 +73,11 @@ module Lispr
       branch = []
       branch.push read_next tokens until tokens.first == ')'
       tokens.shift
-      branch
+      return branch
     elsif token == ')' 
       raise "unexpected ')' token"
     else
-      atomize(token);
+      return atomize(token);
     end
   end
 
