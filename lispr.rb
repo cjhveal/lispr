@@ -26,7 +26,8 @@ module Lispr
              :== =>lambda(&:==), :equal? => lambda(&:==), :eq? => lambda(&:===), :length => lambda(&:length),
              :cons => lambda{|x,y| y.unshift x }, :car => lambda(&:first), :cdr => lambda{|x| x[1..-1]},
              :append => lambda(&:<<), :list => lambda{|*x| x}, :list? => lambda{|x| x.class == Array},
-             :null => lambda(&:empty?), :symbol? => lambda{|x| x.class == Symbol}}
+             :null => lambda(&:empty?), :symbol? => lambda{|x| x.class == Symbol}, :or => lambda{|*x| x.any?},
+             :and => lambda{|*x| x.all?}}
   @@global_env= Env.new GLOBALS
   
   def run x, env=@@global_env
