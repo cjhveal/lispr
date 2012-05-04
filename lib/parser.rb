@@ -2,7 +2,7 @@ module Lispr
   class Parser
     attr_accessor :global_env
 
-    def initialize env
+    def initialize env=Env.new
       @global_env = env
     end
 
@@ -64,9 +64,9 @@ module Lispr
 
     def repl
       loop do
-        print "> "
+        print "lispr> "
         val = run read gets.chomp
-        puts val unless val.nil?
+        puts "=> #{val}" unless val.nil?
       end
     end
   end

@@ -20,10 +20,6 @@ module Lispr
   end
 
   def repl
-    loop do
-      print "lispr> "
-      val = run read gets.chomp
-      puts "=> #{val}" unless val.nil?
-    end
+   @@parser.repl
   end
 end
