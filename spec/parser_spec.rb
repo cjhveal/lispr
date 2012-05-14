@@ -1,5 +1,5 @@
 describe Parser do
-  let(:parser) { Parser.new }
+  let(:parser) { Parser.new Env.new GLOBALS}
   describe :tokenize do
     it "should break tokens up by whitespace" do
       parser.tokenize("abc d e").should eq %w(abc d e)
@@ -28,7 +28,7 @@ describe Parser do
       n.should eq 1
     end
 
-    it "should convert to float" do 
+    it "should convert to float" do
       n = parser.atomize "1.1"
       n.class.should eq Float
       n.should eq 1.1
@@ -38,6 +38,15 @@ describe Parser do
       x = parser.atomize "abc"
       x.class.should eq Symbol
       x.should eq :abc
+    end
+  end
+
+  describe :run do
+    it "should evaluate arithmetic" do
+      parser.run([:+, 1, 1]).should eq 2
+      parser.run([:-, 2, 1]).should eq 1
+      parser.run([:*, 2, 2]).should eq 4
+      parser.run([:/, 4, 2]).should eq 2
     end
   end
 end
