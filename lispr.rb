@@ -16,7 +16,7 @@ module Lispr
   end
 
   def read s
-    @@parser.read_next @@parser.tokenize s
+    @@parser.read s
   end
 
   def repl
