@@ -16,8 +16,18 @@ describe Parser do
      lambda { parser.read_next %w/ ( ( a ) / }.should raise_error
     end
 
+    it "should wrap tokens in lists" do
+      parser.read_next(%w/( a b c )/).should == [:a, :b, :c]
+    end
+
     it "should nest lists" do
       parser.read_next(%w/( ( a b ) c )/).should eq [[:a, :b], :c]
+    end
+
+    it "should atomize bare tokens" do
+      parser.read_next(['1']).should == 1
+      parser.read_next(['1.1']).should == 1.1
+      parser.read_next(['atom']).should == :atom
     end
   end
 
