@@ -15,30 +15,30 @@ module Lispr
     end
 
     def run x, env=@global_env
-      if x.class == Symbol
-        return env.find x
-      elsif x.class != Array
-        return x
-      elsif x.first == :quote
+      return env.find x if x.kind_of? Symbol
+      return x unless x.kind_of? Array
+
+      case x.first
+      when :quote
         return x[1..-1]
-      elsif x.first == :if
+      when :if
         (_, test, conseq, alt) = x
-        return run (run(test,env) ? conseq : alt), env
-      elsif x.first == :set!
+        run (run(test,env) ? conseq : alt), env
+      when :set!
         (_, var, expr) = x
         env.set! var, run(expr,env)
-      elsif x.first == :define
+      when :define
         (_, var, expr) = x
         env.define var, run(expr,env)
-      elsif x.first == :lambda
+      when :lambda
         (_, params, expr) = x
-        return lambda { |*args| run expr, (Env.new Hash[params.zip args], env) }
-      elsif x.first == :begin
+        lambda { |*args| run expr, (Env.new Hash[params.zip args], env) }
+      when :begin
         x[1..-1].map {|expr| run expr, env}.last
       else
         exprs = x.map {|expr| run expr, env}
         procedure = exprs.shift
-        return procedure.call(*exprs)
+        procedure.call(*exprs)
       end
     end
 
@@ -59,7 +59,7 @@ module Lispr
         branch.push read_next tokens until tokens.first == ')'
         tokens.shift
         return branch
-      elsif token == ')' 
+      elsif token == ')'
         raise "unexpected ')' token"
       else
         return atomize(token);
