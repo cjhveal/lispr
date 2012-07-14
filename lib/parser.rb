@@ -2,7 +2,15 @@ module Lispr
   class Parser
     attr_accessor :global_env
 
-    def initialize env=Env.new
+    GLOBALS = {:+ => lambda(&:+), :- => lambda(&:-), :* => lambda(&:*), :/ => lambda(&:/), :% => lambda(&:%),
+               :not => lambda(&:!), :> => lambda(&:>), :< => lambda(&:<), :>= => lambda(&:>=), :<= => lambda(&:<=),
+               :== =>lambda(&:==), :equal? => lambda(&:==), :eq? => lambda(&:===), :length => lambda(&:length),
+               :cons => lambda{|x,y| y.unshift x }, :car => lambda(&:first), :cdr => lambda{|x| x[1..-1]},
+               :append => lambda(&:<<), :list => lambda{|*x| x}, :list? => lambda{|x| x.class == Array},
+               :null => lambda(&:empty?), :symbol? => lambda{|x| x.class == Symbol}, :or => lambda{|*x| x.any?},
+               :and => lambda{|*x| x.all?}}
+
+    def initialize env=Env.new(GLOBALS)
       @global_env = env
     end
 
