@@ -1,5 +1,5 @@
 describe Parser do
-  let(:parser) { Parser.new Env.new GLOBALS}
+  let(:parser) { Parser.new }
   describe :tokenize do
     it "should break tokens up by whitespace" do
       parser.tokenize("abc d e").should eq %w(abc d e)
