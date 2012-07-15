@@ -18,27 +18,26 @@ module Lispr
       return env.find x if x.kind_of? Symbol
       return x unless x.kind_of? Array
 
-      case x.first
+      case procedure = x.shift
       when :quote
-        return x[1..-1]
+        return x
       when :if
-        (_, test, conseq, alt) = x
+        (test, conseq, alt) = x
         run (run(test,env) ? conseq : alt), env
       when :set!
-        (_, var, expr) = x
+        (var, expr) = x
         env.set! var, run(expr,env)
       when :define
-        (_, var, expr) = x
+        (var, expr) = x
         env.define var, run(expr,env)
       when :lambda
-        (_, params, expr) = x
+        (params, expr) = x
         lambda { |*args| run expr, (Env.new Hash[params.zip args], env) }
       when :begin
-        x[1..-1].map {|expr| run expr, env}.last
+        x.map {|expr| run expr, env}.last
       else
         exprs = x.map {|expr| run expr, env}
-        procedure = exprs.shift
-        procedure.call(*exprs)
+        env.find(procedure).call(*exprs)
       end
     end
 
