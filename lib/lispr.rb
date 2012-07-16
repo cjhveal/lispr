@@ -1,5 +1,5 @@
-require './lib/env.rb'
-require './lib/parser.rb'
+require 'lispr/env.rb'
+require 'lispr/parser.rb'
 
 module Lispr
   @@parser = Parser.new
