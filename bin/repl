@@ -4,4 +4,8 @@ $:.unshift File.expand_path(File.join(File.dirname(__FILE__), '../lib'))
 require 'lispr'
 include Lispr
 
-repl
+loop do
+  print "lispr> "
+  val = run read gets.chomp
+  puts "=> #{val}" unless val.nil?
+end

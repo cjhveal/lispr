@@ -42,7 +42,9 @@ module Lispr
     end
 
     def read s
-      read_next tokenize s
+      a = read_next tokenize s
+      puts a.inspect
+      a
     end
 
     def tokenize s
@@ -67,14 +69,6 @@ module Lispr
 
     def atomize token
       Integer(token) rescue Float(token) rescue token.to_sym
-    end
-
-    def repl
-      loop do
-        print "lispr> "
-        val = run read gets.chomp
-        puts "=> #{val}" unless val.nil?
-      end
     end
   end
 end
