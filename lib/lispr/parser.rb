@@ -42,9 +42,7 @@ module Lispr
     end
 
     def read s
-      a = read_next tokenize s
-      puts a.inspect
-      a
+      read_next tokenize s
     end
 
     def tokenize s
